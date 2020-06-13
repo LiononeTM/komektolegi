@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="style.css">
+ 
+  <title>Кошки-мишки сайт</title>
+    <style>
+      .generate-payment-order {
+        display: flex;
+        width: 300px;
+        flex-direction: column;
+      }
+      .payment-order-data {
+        list-style-type: none;
+      }
+    </style>
+  </head>
+  <body>
+
+   <div class="wrapper">
+  <div class="payment">
+    <div class="payment-logo">
+      <p>T</p>
+    </div>
+    
+    <h2>Kömek tölegi</h2>
+
+ <form onsubmit="tolegOrder(event, this)" class="generate-payment-order" placeholder="Hola">
+	<div class="form">
+      <div class="summ space icon-relative">
+        <label class="label">Tölegi giriz:</label>
+        <input type="text" class="input" name="amount" placeholder="0.0 TMT" ">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="summ space icon-relative">
+        <label class="label">Düsündiriş:</label>
+        <input type="text" class="input" name="description" placeholder="" >
+       </div>
+        
+      <div class="btn">
+        Tolegi gecir
+      </div> 
+      </form>
+    </div>
+  </div>
+</div>
+
+
+    <script>
+      async function tolegOrder(event, form) {
+        event.preventDefault();
+        await fetch("http://attest.turkmen-tranzit.com/payment/rest/register.do", {
+           method: "post",
+			 mode: "no-cors",
+	credentials: "include",
+          headers: {
+			"Content-Type": "application/json",
+			"Accept": "application/json"
+			},
+          body: JSON.stringify({
+				orderNumber: "854655121", //form.orderNumber,
+		          returnUrl: "local",   //returnUrl,
+		     description: form.description,
+				password: "1756",    //form.password.value,
+				userName: "client2", //form.userName.value,
+		          amount: form.amount.value
+          })
+        })
+          .then(function(response) {
+            return response.json();
+		})
+          .then(function(data) {
+		  //Success code
+            			console.log(`Success ${data.data.orderId}`);
+            			const generatedPaymentOrderData = document.querySelector(
+             				 ".payment-order-data");
+           generatedPaymentOrderData.innerHTML = `
+					<li> <strong>Gecen tolegler:</strong></li>
+					<li>
+					<span class="payment-order-id">OrderId: ${data.data.orderId}</span>
+					</li>
+            `;
+		})
+          .catch(function(errorCode) {
+		console.log(`Error errorCode}`);
+		});
+        }
+    </script>
+  </body>
+</html>
